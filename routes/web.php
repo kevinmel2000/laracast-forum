@@ -9,4 +9,4 @@ Route::get('/', function () {
 
 Route::get('/thread', 'ThreadController@index');
 Route::get('/thread/{thread}', 'ThreadController@show');
-Route::post('/thread/{thread}/reply', 'ReplyController@store');
+Route::post('/thread/{thread}/reply', 'ReplyController@store')->name('thread.add-reply');
