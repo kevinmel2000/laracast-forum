@@ -46,7 +46,7 @@ class Handler extends ExceptionHandler
     {
         // NOTE: To handle a false positive when there's no actual route
         // i.e: See /tests/Feature/ParticipateInForumTest.php @line:35
-        if (app()->environment() === 'testing') throw $exception;
+        // if (app()->environment() === 'testing') throw $exception;
 
         return parent::render($request, $exception);
     }

@@ -7,8 +7,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/thread', 'ThreadController@index');
-Route::post('/thread', 'ThreadController@store');
-Route::get('/thread/{thread}', 'ThreadController@show');
+Route::resource('thread', 'ThreadController');
 
 Route::post('/thread/{thread}/reply', 'ReplyController@store')->name('thread.add-reply');
