@@ -6,6 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Thread extends Model
 {
+    protected $fillable = [
+        'user_id',
+        'title',
+        'body'
+    ];
+
+    //////////////////////////////////////// RELATIONSHIP ////////////////////////////////////////
+
     public function author()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -16,6 +24,7 @@ class Thread extends Model
         return $this->hasMany(Reply::class);
     }
 
+    /////////////////////////////////////////// HELPER ///////////////////////////////////////////
 
     public function path()
     {
