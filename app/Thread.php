@@ -8,6 +8,7 @@ class Thread extends Model
 {
     protected $fillable = [
         'user_id',
+        'channel_id',
         'title',
         'body'
     ];
@@ -19,6 +20,11 @@ class Thread extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function channel()
+    {
+        return $this->belongsTo(Channel::class);
+    }
+
     public function replies()
     {
         return $this->hasMany(Reply::class);
@@ -28,7 +34,7 @@ class Thread extends Model
 
     public function path()
     {
-        return '/thread/' . $this->id;
+        return "/thread/{$this->channel->slug}/$this->id";
     }
 
     public function addReply($reply)

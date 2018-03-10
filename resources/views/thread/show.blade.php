@@ -24,6 +24,10 @@
         </div>
 
         <div class="row">
+            <div class="col-md-10 col-md-offset-2">
+                <h4>Replies:</h4>
+            </div>
+
             @foreach ($thread->replies as $reply)
                 @include('thread.replies')
             @endforeach
@@ -32,7 +36,7 @@
         @if (auth()->check())
             <div class="row">
                 <div class="col-md-8 col-md-offset-2">
-                    <form action="{{ route('thread.add-reply', $thread) }}" method="post">
+                    <form action="{{ route('thread.add-reply', [$thread->channel, $thread]) }}" method="post">
                         {{ csrf_field() }}
 
                         <div class="form-group">
