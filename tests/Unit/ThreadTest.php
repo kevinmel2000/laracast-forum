@@ -14,7 +14,6 @@ class ThreadTest extends TestCase
     use DatabaseMigrations;
 
     public function setUp()
-
     {
         parent::setUp();
 
