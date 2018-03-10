@@ -9,7 +9,7 @@
                         Create a New Thread
                     </div>
                     <div class="panel-body">
-                        <form method="post" action="{{ route('thread.store') }}">
+                        <form method="post" action="/thread">
                             {{ csrf_field() }}
 
                             <div class="form-group">
