@@ -13,12 +13,22 @@ class Thread extends Model
         'body'
     ];
 
+    protected $with = ['channel'];
+
+    /////////////////////////////////////////// BOOT ////////////////////////////////////////////
+
     protected static function boot()
     {
         parent::boot();
 
         static::addGlobalScope('repliesCount', function ($builder) {
             $builder->withCount('replies');
+        });
+
+        // NOTE: Yes we can use "protected $with = ['author']", but
+        // the advantages of using global scope is we can disable it by calling withoutGlobalScopes()
+        static::addGlobalScope('author', function ($builder) {
+            $builder->with('author');
         });
     }
 
@@ -44,8 +54,10 @@ class Thread extends Model
     public function replies()
     {
         return $this->hasMany(Reply::class)
-                    ->with('owner')           // Use eager load to reduce query load
-                    ->withCount('favorites'); // Use eager load to reduce query load
+                    ->withCount('favorites'); 
+
+                    // NOTE: Alternatively use Reply's protected $with method instead
+                    // ->with('owner') 
     }
 
     /////////////////////////////////////////// HELPER ///////////////////////////////////////////
@@ -55,7 +67,6 @@ class Thread extends Model
         // NOTE: To avoid N+1 problem, eager load the 'channel' relationship
         // See ThreadController.php's getThreads() function for detail
         // This way we hunt down from 52 queries to only 2-3 queries
-
         return "/thread/{$this->channel->slug}/$this->id";
     }
 
