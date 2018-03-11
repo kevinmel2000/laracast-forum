@@ -42,7 +42,7 @@
                                 Channels <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu">
-                                @foreach (App\Channel::get() as $channel)
+                                @foreach (App\Channel::all() as $channel)
                                     <li>
                                         <a href="/thread/{{ $channel->slug }}">
                                             {{ $channel->name }}
@@ -66,6 +66,12 @@
                                 </a>
 
                                 <ul class="dropdown-menu" role="menu">
+                                    <li>
+                                        <a href="/thread/create">
+                                            Create New Thread
+                                        </a>
+                                    </li>
+                                    <li role="separator" class="divider"></li>
                                     <li>
                                         <a href="{{ route('logout') }}"
                                             onclick="event.preventDefault();
