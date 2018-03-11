@@ -44,13 +44,18 @@ class Thread extends Model
     public function replies()
     {
         return $this->hasMany(Reply::class)
-                    ->withCount('favorites'); // Count favorites using eager load
+                    ->with('owner')           // Use eager load to reduce query load
+                    ->withCount('favorites'); // Use eager load to reduce query load
     }
 
     /////////////////////////////////////////// HELPER ///////////////////////////////////////////
 
     public function path()
     {
+        // NOTE: To avoid N+1 problem, eager load the 'channel' relationship
+        // See ThreadController.php's getThreads() function for detail
+        // This way we hunt down from 52 queries to only 2-3 queries
+
         return "/thread/{$this->channel->slug}/$this->id";
     }
 
