@@ -43,7 +43,8 @@ class Thread extends Model
 
     public function replies()
     {
-        return $this->hasMany(Reply::class);
+        return $this->hasMany(Reply::class)
+                    ->withCount('favorites'); // Count favorites using eager load
     }
 
     /////////////////////////////////////////// HELPER ///////////////////////////////////////////

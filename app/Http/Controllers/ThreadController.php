@@ -84,6 +84,9 @@ class ThreadController extends Controller
             'thread'    => $thread,
             'replies'   => $thread->replies()->paginate(4)
         ]);
+
+        // NOTE: Eager load can save us from N+1 problem
+        // return $thread->load(['replies.favorites', 'replies.owner']);
     }
 
     /**
