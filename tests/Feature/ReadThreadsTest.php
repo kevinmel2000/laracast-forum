@@ -13,6 +13,8 @@ class ReadThreadsTest extends TestCase
 {
     use DatabaseMigrations;
 
+    protected $thread;
+
     public function setUp()
     {
         parent::setUp();
@@ -67,5 +69,25 @@ class ReadThreadsTest extends TestCase
         $this->get('/thread?by=' . auth()->user()->name)
              ->assertSee($threadByKukuh->title)
              ->assertDontSee($threadNotByKukuh->title);
+    }
+
+    /** @test */
+    public function a_user_can_filter_thread_by_popularity()
+    {
+        // Given we have 3 threads
+        // with 2 replies, 3 replies, and 0 reply respectively
+        $threadWith2Replies = create(Thread::class);
+        create(Reply::class, ['thread_id' => $threadWith2Replies->id], 2);
+
+        $threadWith3Replies = create(Thread::class);
+        create(Reply::class, ['thread_id' => $threadWith3Replies->id], 3);
+
+        $threadWithNoReply = $this->thread;
+
+        // When a user filter those threads by popularity
+        $response = $this->getJson('/thread?popular=1')->json();
+
+        // Then they should return from most replies to least.
+        $this->assertEquals([3, 2, 0], array_column($response, 'replies_count'));
     }
 }

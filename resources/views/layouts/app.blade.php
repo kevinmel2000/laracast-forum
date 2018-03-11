@@ -12,8 +12,17 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+    <style>
+        body { padding-bottom: 200px; }
+        .level { 
+            display: flex;
+            align-items: center;
+        }
+        .flex { flex: 1; }
+    </style>
 </head>
-<body style="padding-bottom: 200px;">
+<body>
     <div id="app">
         <nav class="navbar navbar-default navbar-static-top">
             <div class="container">
@@ -38,13 +47,17 @@
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                Browse <span class="caret"></span>
+                                Browse Threads <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a href="/thread">All Threads</a>
+                                    <a href="/thread">Latest Threads</a>
+                                </li>
+                                <li>
+                                    <a href="/thread?popular=1">Popular All Time</a>
                                 </li>
                                 @if (auth()->check())
+                                    <li role="separator" class="divider"></li>
                                     <li>
                                         <a href="/thread?by={{ auth()->user()->name }}">
                                             My Threads
