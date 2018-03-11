@@ -13,6 +13,13 @@ class Thread extends Model
         'body'
     ];
 
+    //////////////////////////////////////// QUERY SCOPE /////////////////////////////////////////
+
+    public function scopeFilter($query, $filters)
+    {
+        return $filters->apply($query);
+    }
+
     //////////////////////////////////////// RELATIONSHIP ////////////////////////////////////////
 
     public function author()
