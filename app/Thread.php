@@ -13,6 +13,15 @@ class Thread extends Model
         'body'
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope('repliesCount', function ($builder) {
+            $builder->withCount('replies');
+        });
+    }
+
     //////////////////////////////////////// QUERY SCOPE /////////////////////////////////////////
 
     public function scopeFilter($query, $filters)
