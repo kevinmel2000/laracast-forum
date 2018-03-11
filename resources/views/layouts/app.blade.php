@@ -42,7 +42,7 @@
                                 Channels <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu">
-                                @foreach (App\Channel::all() as $channel)
+                                @foreach ($channels as $channel)
                                     <li>
                                         <a href="/thread/{{ $channel->slug }}">
                                             {{ $channel->name }}

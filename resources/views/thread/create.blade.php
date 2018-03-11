@@ -26,7 +26,7 @@
                                 <select class="form-control" name="channel_id" id="channel_id" required>
                                     <option value="">Choose one...</option>
                                     
-                                    @foreach (App\Channel::all() as $channel)
+                                    @foreach ($channels as $channel)
                                         <option value="{{ $channel->id }}" 
                                                 {{ old('channel_id') == $channel->id ? 'selected' : '' }}>
                                             {{ $channel->name }}
