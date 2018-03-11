@@ -15,6 +15,8 @@
                                         <a href="{{ $thread->path() }}">
                                             {{ $thread->title }}
                                         </a>
+                                        
+                                        <small>{{ $thread->created_at->diffForHumans() }}</small>
                                     </h4>
 
                                     <a href="{{ $thread->path() }}">

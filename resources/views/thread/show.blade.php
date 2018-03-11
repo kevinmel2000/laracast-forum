@@ -44,7 +44,12 @@
                     <div class="panel-body">
                         <p>This thread was published {{ $thread->created_at->diffForHumans() }}.</p>
                         
-                        <p>Posted by <a href="#">{{ $thread->author->name }}</a>.</p>
+                        <p>
+                            Posted by 
+                            <a href="{{ route('profile', $thread->author) }}">
+                                {{ $thread->author->name }}
+                            </a>.
+                        </p>
                         
                         <p>Currently has {{ $thread->replies_count }} 
                             {{ str_plural('comment', $thread->replies_count) }}.</p>
