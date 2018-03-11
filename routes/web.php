@@ -15,3 +15,5 @@ Route::post('/thread', 'ThreadController@store');
 // Route::resource('thread', 'ThreadController');
 
 Route::post('/thread/{channel}/{thread}/reply', 'ReplyController@store')->name('thread.add-reply');
+
+Route::post('/reply/{reply}/favorite', 'FavoriteController@store')->name('reply.favorite');
