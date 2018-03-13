@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Reply;
 use App\Thread;
 use App\Channel;
 use Tests\TestCase;
@@ -76,5 +77,39 @@ class CreateThreadTest extends TestCase
 
         $this->publishThread(['channel_id' => 999])
              ->assertSessionHasErrors('channel_id');
+    }
+
+    /** @test */
+    public function a_guest_can_not_delete_a_thread()
+    {
+        $this->withExceptionHandling();
+
+        $thread = create(Thread::class);
+
+        $response = $this->delete($thread->path());
+
+        $response->assertRedirect('/login');
+    }
+
+    /** @test */
+    public function a_thread_can_be_deleted()
+    {
+        $this->signIn();
+
+        $thread = create(Thread::class);
+        
+        $reply = create(Reply::class, ['thread_id' => $thread->id]);
+        
+        $favorite = $reply->favorites()->create([
+            'user_id' => auth()->id()
+        ]);
+
+        $response = $this->json('DELETE', $thread->path());
+
+        $response->assertStatus(204);
+        
+        $this->assertDatabaseMissing('threads', ['id' => $thread->id]);
+        $this->assertDatabaseMissing('replies', ['id' => $reply->id]);
+        $this->assertDatabaseMissing('favorites', ['favoritables_id' => $reply->id]);
     }
 }

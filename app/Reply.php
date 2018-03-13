@@ -17,6 +17,17 @@ class Reply extends Model
 
     protected $with = ['owner', 'favorites'];
 
+    /////////////////////////////////////////// BOOT ////////////////////////////////////////////
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($reply) {
+            $reply->favorites->each->delete();
+        });
+    }
+
     //////////////////////////////////////// RELATIONSHIP ////////////////////////////////////////
 
     public function owner()

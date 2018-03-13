@@ -30,6 +30,14 @@ class Thread extends Model
         static::addGlobalScope('author', function ($builder) {
             $builder->with('author');
         });
+
+        static::deleting(function ($thread) {
+            $thread->replies->each->delete();
+            
+            $thread->replies->each(function ($reply) {
+                $reply->favorites->each->delete();
+            });
+        });
     }
 
     //////////////////////////////////////// QUERY SCOPE /////////////////////////////////////////

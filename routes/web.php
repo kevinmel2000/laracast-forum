@@ -12,6 +12,7 @@ Route::get('/thread/create', 'ThreadController@create');
 Route::get('/thread/{channel}', 'ThreadController@index');
 Route::get('/thread/{channel}/{thread}', 'ThreadController@show');
 Route::post('/thread', 'ThreadController@store');
+Route::delete('/thread/{channel}/{thread}', 'ThreadController@destroy');
 // Route::resource('thread', 'ThreadController');
 
 Route::post('/thread/{channel}/{thread}/reply', 'ReplyController@store')->name('thread.add-reply');

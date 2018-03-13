@@ -6,7 +6,22 @@
             <div class="col-md-8">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3>{{ $thread->title }}</h3>
+                        <div class="level">
+                            <div class="flex">
+                                <h3>{{ $thread->title }}</h3>
+                            </div>
+
+                            @if (Auth::check())
+                                <form action="{{ $thread->path() }}" method="post">
+                                    {{ csrf_field() }}
+                                    {{ method_field('DELETE') }}
+
+                                    <button type="submit" class="btn btn-link">
+                                        Delete
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
                     </div>
 
                     <div class="panel-body">
