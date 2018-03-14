@@ -27,11 +27,15 @@ class CreateThreadTest extends TestCase
     {
         $this->withExceptionHandling();
 
-        // Can not see a thread create form, and...
+        // Given: no signed in user
+        // When: we go to thread creation URI
+        // Then: we should redirected to the login page
         $this->get('/thread/create')
              ->assertRedirect('/login');
 
-        // ...can not store a new thread
+        // Given: no signed in user
+        // When: we go to thread store URI
+        // Then: we should redirected to the login page
         $this->post('/thread')
              ->assertRedirect('/login');
     }
@@ -39,15 +43,16 @@ class CreateThreadTest extends TestCase
     /** @test */
     public function an_authenticated_user_can_create_a_thread()
     {
-        // Given we have a signed in user
+        // Given: we have a signed in user
         $this->signIn();
 
-        // When we hit the endpoint to create a new thread
+        // When: we hit the endpoint to create a new thread
         $thread = make(Thread::class);
         
         $response = $this->post('/thread', $thread->toArray());
 
-        // Then, when we visit this thread page,...
+        // Then: when we visit this thread page
+        // we should see the newly created thread
         $this->get($response->headers->get('Location'))
              ->assertSee($thread->title)
              ->assertSee($thread->body);
@@ -56,6 +61,9 @@ class CreateThreadTest extends TestCase
     /** @test */
     public function a_thread_creation_requires_a_title()
     {
+        // Given: a signed in user 
+        // When: this signed user create a thread with nulled title
+        // Then: we should see a validation/session error on 'title'
         $this->publishThread(['title' => null])
              ->assertSessionHasErrors('title');
     }
@@ -63,6 +71,9 @@ class CreateThreadTest extends TestCase
     /** @test */
     public function a_thread_creation_requires_a_body()
     {
+        // Given: a signed in user 
+        // When: this signed user create a thread with nulled body
+        // Then: we should see a validation/session error on 'body'
         $this->publishThread(['body' => null])
              ->assertSessionHasErrors('body');
     }
@@ -70,46 +81,70 @@ class CreateThreadTest extends TestCase
     /** @test */
     public function a_thread_creation_requires_a_valid_channel()
     {
-        create(Channel::class); // id=1
+        // Given: a channel (id=1)
+        create(Channel::class);
         
+        // When: we create a thread without a channel
+        // Then: we should see a validation/session error on 'channel_id'
         $this->publishThread(['channel_id' => null])
              ->assertSessionHasErrors('channel_id');
 
+        // When: we create a thread with a channel that does not exists
+        // Then: we should see a validation/session error on 'channel_id'
         $this->publishThread(['channel_id' => 999])
              ->assertSessionHasErrors('channel_id');
     }
 
     /** @test */
-    public function a_guest_can_not_delete_a_thread()
+    public function an_unauthorized_user_may_not_delete_a_thread()
     {
         $this->withExceptionHandling();
 
+        // Given: 
+        // 1. No user signed in
+        // 2. A thread created
         $thread = create(Thread::class);
 
-        $response = $this->delete($thread->path());
+        // When: we try to delete that thread
+        // Then: we should redirected to the login page (since it's unauthorized)
+        $this->delete($thread->path())
+             ->assertRedirect('/login');
 
-        $response->assertRedirect('/login');
+        // Given: a signed in user
+        $this->signIn();
+
+        // When: we try to delete that thread (which does not belongs to the signed in user)
+        // Then: we should redirect to the login page (since it's unauthorized)
+        $this->delete($thread->path())
+             ->assertStatus(403);
     }
 
     /** @test */
-    public function a_thread_can_be_deleted()
+    public function an_authorized_user_can_delete_a_thread()
     {
+        // Given: a signed user create a thread with a favorited reply
         $this->signIn();
 
-        $thread = create(Thread::class);
-        
+        $thread = create(Thread::class, ['user_id' => auth()->id()]);
         $reply = create(Reply::class, ['thread_id' => $thread->id]);
-        
-        $favorite = $reply->favorites()->create([
-            'user_id' => auth()->id()
-        ]);
+        $favorite = $reply->favorites()->create(['user_id' => auth()->id()]);
 
+        // When: we hit a delete endpoint of this thread
         $response = $this->json('DELETE', $thread->path());
 
+        // Then: 
+        // 1. We should get 204 http code
+        // 2. With no thread and its favorited reply on the DB
         $response->assertStatus(204);
         
         $this->assertDatabaseMissing('threads', ['id' => $thread->id]);
         $this->assertDatabaseMissing('replies', ['id' => $reply->id]);
         $this->assertDatabaseMissing('favorites', ['favoritables_id' => $reply->id]);
+    }
+
+    /** @test */
+    public function a_thread_can_only_be_deleted_by_those_who_have_permission()
+    {
+        //
     }
 }

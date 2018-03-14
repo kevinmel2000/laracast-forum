@@ -121,6 +121,19 @@ class ThreadController extends Controller
      */
     public function destroy(Channel $channel, Thread $thread)
     {
+        $this->authorize('update', $thread);
+
+        // NOTE: A manual version of Policy
+        // if ($thread->user_id != auth()->id()) {
+        //     if (request()->wantsJson()) {
+        //         return response(['status' => 'Permission Denied'], 403);
+        //     }
+
+        //     abort(403, 'You do not have permission to delete other user thread');
+            
+        //     // return redirect('/login');
+        // }
+
         $thread->delete();
 
         if (request()->wantsJson()) {
@@ -130,6 +143,13 @@ class ThreadController extends Controller
         return redirect('/thread');
     }
 
+    /**
+     * A helper to format a thread data retreived from DB
+     *
+     * @param Channel $channel
+     * @param ThreadFilters $filters
+     * @return Thread
+     */
     protected function getThreads(Channel $channel, ThreadFilters $filters)
     {
         $threads = Thread::latest()->filter($filters);
